@@ -3,27 +3,44 @@
 #include <tchar.h>
 #include <TlHelp32.h>
 #include <direct.h>
+#include <string.h>
+#include <atlstr.h>
 
-extern "C" __declspec(dllexport) int Inject();
+void CharToTchar(const char * _char, TCHAR * tchar)
+{
+	int iLength;
+	iLength = MultiByteToWideChar(CP_ACP, 0, _char, strlen(_char) + 1, NULL, 0);
+	MultiByteToWideChar(CP_ACP, 0, _char, strlen(_char) + 1, tchar, iLength);
+}
 
-int Inject()
+extern "C" __declspec(dllexport) int Inject(char* dllFileName);
+
+int Inject(char* dllFileName)
 {
 	// 需要被注入的dll
 	//TCHAR DllFileName[] = TEXT("");
 	//TCHAR DirName[] = TEXT("");
 	// 微信id
 	DWORD pid = 0;
-	/*GetCurrentDirectoryW(sizeof(DirName), DirName);
+	//char DllFileName[MAX_PATH] = "E:\\c++\\demoIndejt\\InjectWeChat.dll";
+
+	/*TCHAR DirName[MAX_PATH] = TEXT("");
+	//char dllNamePath[256] = "";
+	TCHAR DllFileName[MAX_PATH] = TEXT("");
+	GetCurrentDirectoryW(sizeof(DirName), DirName);//
 	wcscat_s(DllFileName, DirName);
 	wcscat_s(DllFileName, TEXT("\\"));
-	wcscat_s(DllFileName, TEXT("InjectWeChat.dll"));*/
-	char path[MAX_PATH];
-	char DllFileName[] = "E:\\c++\\demoIndejt\\Debug\\InjectWeChat.dll";
-	GetCurrentDirectory(MAX_PATH, LPWSTR(path));
-	// wcscat_s(DllFileName, path);
+	wcscat_s(DllFileName, TEXT("InjectWeChat.dll"));
+	*/
+	const char* DllFileName = "aaaa";
+	TCHAR a[MAX_PATH] = TEXT("");
+	CharToTchar(dllFileName, a);
+	MessageBox(NULL, LPCWSTR(dllFileName), TEXT("aaa"), MB_OK);
+
+	return 0;
 	// 需要被注入的dll长度
-	DWORD strSize = strlen(DllFileName) + 1;
-	//DWORD strSize = sizeof(DllFileName) + 1;
+	//DWORD strSize = strlen(DllFileName) + 1;
+	DWORD strSize = sizeof(DllFileName) + 1;
 
 	// 1> 遍历进程找到微信进程
 	HANDLE wxHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
@@ -32,7 +49,8 @@ int Inject()
 	BOOL next = Process32Next(wxHandle, &processentry32);
 	while (next == TRUE)
 	{
-		if (wcscmp(processentry32.szExeFile, L"WeChat.exe") == 0) {
+		// if (wcscmp(processentry32.szExeFile, L"WeChat.exe") == 0) {
+		if (wcscmp(processentry32.szExeFile, L"YoudaoDict.exe") == 0) {
 			pid = processentry32.th32ProcessID;
 			break;
 		}
@@ -52,7 +70,7 @@ int Inject()
 		return 3;
 	}
 	//4)	把DLL文件路径字符串写入到申请的内存中（WriteProcessMemory）
-	BOOL result = WriteProcessMemory(hProcess, allocAddress, DllFileName, strSize, NULL);
+	BOOL result = WriteProcessMemory(hProcess, allocAddress, LPCVOID(DllFileName), strSize, NULL);
 	if (result == FALSE)
 	{
 		return 4;

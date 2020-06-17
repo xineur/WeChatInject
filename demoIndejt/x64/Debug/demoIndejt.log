@@ -1,0 +1,6 @@
+﻿  pch.cpp
+  dllmain.cpp
+e:\dll\wechatinject\demoindejt\dllmain.cpp(12): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+e:\dll\wechatinject\demoindejt\dllmain.cpp(13): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+    正在创建库 E:\dll\WeChatInject\x64\Debug\demoIndejt.lib 和对象 E:\dll\WeChatInject\x64\Debug\demoIndejt.exp
+  demoIndejt.vcxproj -> E:\dll\WeChatInject\x64\Debug\demoIndejt.dll
